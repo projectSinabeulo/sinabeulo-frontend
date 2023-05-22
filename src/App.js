@@ -1,5 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Search, Practice, FeedBack } from "./pages"
+import "./styles/font/font.css"
 
 function App() {
   return (
