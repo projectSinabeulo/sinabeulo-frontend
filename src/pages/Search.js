@@ -6,32 +6,26 @@ import ImageButton from "../components/ImageButton"
 import icon_search from "../assets/icon_search.png"
 
 function Search() {
-    const [word, setWord] = useState('');
     const navigate = useNavigate();
+    const [word, setWord] = useState('');
 
     const onInputChange = (e) => {
         setWord(e.target.value);
     };
 
+    //검색 버튼 클릭시 연습 화면으로 이동, 사용자 입력 단어 전달
     const onSearchButtonClick = () => {
         console.log(word);
-        navigate('/practice', {
-            state: {
-                inputWord: word
-            }
-          });
+        navigate('/practice', { state: word});
     }
 
     return (
         <Container>
             <Input onChange={onInputChange} value={word} placeholder="발음 연습하고 싶은 단어를 입력해주세요"/>
-            <ImageButton width="103px" height="103px" image={icon_search} onClick={onSearchButtonClick}>
-                {/* <Link to="/practice" /> */}
-            </ImageButton>
+            <ImageButton width="103px" height="103px" image={icon_search} onClick={onSearchButtonClick} />
         </Container>
     )
 }
-
 export default Search;
 
 const Container = styled.div`

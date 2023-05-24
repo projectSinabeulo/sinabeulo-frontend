@@ -1,13 +1,12 @@
 import { useLocation } from 'react-router-dom';
 
 function Practice () {
-    const location = useLocation();
-
-    const inputWord = location.state.inputWord;
+    //사용자 입력 단어 전달 받음
+    const inputWord = useLocation().state;
 
     return (
         <div>
-            this is practice page!!
+            this is practice page!! {inputWord}
         </div>
     );
 }
