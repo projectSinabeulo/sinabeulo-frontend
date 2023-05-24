@@ -2,6 +2,8 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Search, Practice, FeedBack } from "./pages"
 import "./styles/font/font.css"
 
+import "./App.css"
+
 function App() {
   return (
     <BrowserRouter>
