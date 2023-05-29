@@ -2,7 +2,7 @@ export const Colors = {
     while1: "#FFFFFF",      //shadow
     white2: "#F9F9F9",
     green1: "#F0F6F1",
-    grren2: "#8DB14A",
+    green2: "#8DB14A",
     gray1: "#4A4D44",       //shadow
     gray2: "#797979",
     gray3: "#595959",

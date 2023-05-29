@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { Colors } from "../styles/ui";
-import ImageButton from "../components/ImageButton"
+import { ImageButton } from "../components"
 import icon_search from "../assets/icon_search.png"
 
 function Search() {
@@ -44,7 +44,7 @@ const Input = styled.input`
     padding-left: 51px;
     margin-right: 20px;
 
-    background: #F0F6F1;
+    background: ${Colors.green1};
     box-shadow: inset 13px 13px 30px rgba(58, 61, 54, 0.16), inset -20px -20px 25px rgba(255, 255, 255, 0.64);
     border-radius: 30px;
     border:none;
