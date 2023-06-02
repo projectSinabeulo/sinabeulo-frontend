@@ -1,23 +1,43 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { Colors } from "../styles/ui";
-import { TextButton, HrBox } from '../components'
-import icon_search from '../assets/icon_speacker.png'
+import { TextButton, HrBox, OuterBox, ImageButton, InnerBox, ImageBox } from '../components'
+import icon_speacker from '../assets/icon_speacker.png'
+import icon_previous from "../assets/icon_previous.png"
+import icon_next from "../assets/icon_next.png"
+import icon_record from "../assets/icon_record.png"
+import icon_complete from "../assets/icon_complete.png"
+import image_tongue from "../assets/image_tongue.png"
+
 
 function Practice () {
+    const navigate = useNavigate();
     //사용자 입력 단어 전달 받음
     const inputWord = useLocation().state;
 
     const onClickListenBtn = () => {
-        console.log("표준 발음 다시 듣기 버튼 클릭")
+        console.log("표준 발음 다시 듣기 버튼 클릭");
+    };
+
+    const onRecord = () => {
+        console.log("발음하기 버튼 클릭");
+    };
+
+    const onCheck = () => {
+        console.log("들어보기 버튼 클릭");
+    };
+
+    const onComplete = () => {
+        console.log("완료하기 버튼 클릭");
+        navigate('/feedback', { state: inputWord});
     };
 
     return (
         <Container>
 
             {/* 좌측 표준 발음 변환 결과 영역 */}
-            <ResultBox>
-                <InnerBox>
+            <LeftBox>
+                <InnerArea>
                     <TextArea>
                         <div className='title'>입력한 단어</div>
                         <div className='content' style={{color:Colors.gray4}}>좋다</div>
@@ -27,11 +47,28 @@ function Practice () {
                         <div className='title'>표준 발음 변환 결과</div>
                         <div className='content' style={{color:Colors.green2}}>조타</div>
                     </TextArea>
-                </InnerBox>
-                <TextButton image={icon_search} text1="표준 발음" text2="듣기" onClick={onClickListenBtn}/>
-            </ResultBox>
+                </InnerArea>
+                <TextButton width="150px" height="150px" image={icon_speacker} text1="표준 발음" text2="듣기" onClick={onClickListenBtn}/>
+            </LeftBox>
 
             {/* 우측 연습 영역 */}
+            <RightBox>
+                <OuterBox className='practiceWord' width="40vw" height="134px" text="조"></OuterBox>
+                <RowBox className='practiceImages'>
+                    <ImageButton width="75px" height="139px" image={icon_previous} />
+                    <InnerBox width="54px" height="30vh" text="표준발음"/>
+                    <ImageBox width="15vw" image={image_tongue} />
+                    <ImageBox width="15vw" image={image_tongue} />
+                    <ImageButton width="75px" height="139px" image={icon_next}/>
+                </RowBox>
+                <RowBox className='practiceButtons'>
+                    <div style={{width:"2vw"}} />
+                    <TextButton width="178px" height="148px" image={icon_record} text1="발음하기" onClick={onRecord}/>
+                    <TextButton width="178px" height="148px" image={icon_speacker} text1="들어보기" onClick={onCheck}/>
+                    <TextButton width="178px" height="148px" image={icon_complete} text1="완료하기" onClick={onComplete}/>
+                    <div style={{width:"2vw"}} />
+                </RowBox>
+            </RightBox>
         </Container>
     );
 }
@@ -49,7 +86,7 @@ const Container = styled.div`
     padding: 0px 62px;
 `
 
-const ResultBox = styled.div`
+const LeftBox = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -62,7 +99,7 @@ const ResultBox = styled.div`
     border-radius: 40px;
 `;
 
-const InnerBox = styled.div`
+const InnerArea = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -96,5 +133,25 @@ align-items: center;
     font-size: 30px;
     color: ${Colors.grren2};
 }
+`
 
+const RightBox = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+
+width: 70vw;
+height: 94vh;
+`
+
+const RowBox = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+
+width: 85%;
+
+margin: 36px 0px 36px 0px;
 `
