@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { Colors } from "../styles/ui";
-import { TextButton, HrBox, OuterBox, ImageButton, InnerBox, ImageBox } from '../components'
+import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, ImageBox } from '../components'
 import icon_speacker from '../assets/icon_speacker.png'
 import icon_previous from "../assets/icon_previous.png"
 import icon_next from "../assets/icon_next.png"
@@ -48,12 +48,12 @@ function Practice () {
                         <div className='content' style={{color:Colors.green2}}>조타</div>
                     </TextArea>
                 </InnerArea>
-                <TextButton width="150px" height="150px" image={icon_speacker} text1="표준 발음" text2="듣기" onClick={onClickListenBtn}/>
+                <MultiButton width="150px" height="150px" image={icon_speacker} text1="표준 발음" text2="듣기" onClick={onClickListenBtn}/>
             </LeftBox>
 
             {/* 우측 연습 영역 */}
             <RightBox>
-                <OuterBox className='practiceWord' width="40vw" height="134px" text="조"></OuterBox>
+                <OuterBox className='practiceWord' width="40vw" height="114px" text="조"></OuterBox>
                 <RowBox className='practiceImages'>
                     <ImageButton width="75px" height="139px" image={icon_previous} />
                     <InnerBox width="54px" height="30vh" text="표준발음"/>
@@ -63,9 +63,9 @@ function Practice () {
                 </RowBox>
                 <RowBox className='practiceButtons'>
                     <div style={{width:"2vw"}} />
-                    <TextButton width="178px" height="148px" image={icon_record} text1="발음하기" onClick={onRecord}/>
-                    <TextButton width="178px" height="148px" image={icon_speacker} text1="들어보기" onClick={onCheck}/>
-                    <TextButton width="178px" height="148px" image={icon_complete} text1="완료하기" onClick={onComplete}/>
+                    <MultiButton width="178px" height="148px" image={icon_record} text1="발음하기" onClick={onRecord}/>
+                    <MultiButton width="178px" height="148px" image={icon_speacker} text1="들어보기" onClick={onCheck}/>
+                    <MultiButton width="178px" height="148px" image={icon_complete} text1="완료하기" onClick={onComplete}/>
                     <div style={{width:"2vw"}} />
                 </RowBox>
             </RightBox>

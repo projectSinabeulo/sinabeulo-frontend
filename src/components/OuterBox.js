@@ -19,11 +19,11 @@ align-items: center;
 
 background: ${Colors.green1};
 box-shadow: 14px 14px 35px rgba(74, 77, 68, 0.16), -11px -11px 30px #FFFFFF;
-border-radius: 40px;
+border-radius: 30px;
 
 .text{
     font-weight: 700;
-    font-size: 70px;
+    font-size: 60px;
     color: ${Colors.gray4};
 }
 `

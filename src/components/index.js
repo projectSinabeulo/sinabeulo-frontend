@@ -1,6 +1,7 @@
 export { default as ImageButton } from "./ImageButton"
 export { default as InnerBox } from "./InnerBox"
-export { default as TextButton } from "./TextButton"
+export { default as MultiButton } from "./MultiButton"
 export { default as HrBox } from "./HrBox"
 export { default as OuterBox } from "./OuterBox"
 export { default as ImageBox } from "./ImageBox"
+export { default as TextButton } from "./TextButton"
