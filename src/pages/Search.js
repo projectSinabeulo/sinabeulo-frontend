@@ -19,9 +19,15 @@ function Search() {
         navigate('/practice', { state: word});
     }
 
+    const onSearchButtonDown = (e) => {
+        if(e.key == "Enter"){
+            onSearchButtonClick();
+        }
+    }
+
     return (
         <Container>
-            <Input onChange={onInputChange} value={word} placeholder="발음 연습하고 싶은 단어를 입력해주세요"/>
+            <Input placeholder="발음 연습하고 싶은 단어를 입력해주세요" onChange={onInputChange} value={word} onKeyDown={onSearchButtonDown}/>
             <ImageButton width="103px" height="103px" image={icon_search} onClick={onSearchButtonClick} />
         </Container>
     )

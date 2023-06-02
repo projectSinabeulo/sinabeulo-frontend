@@ -40,7 +40,7 @@ function Practice () {
                 <InnerArea>
                     <TextArea>
                         <div className='title'>입력한 단어</div>
-                        <div className='content' style={{color:Colors.gray4}}>좋다</div>
+                        <div className='content' style={{color:Colors.gray4}}>{inputWord}</div>
                     </TextArea>
                     <HrBox width="90%"/>
                     <TextArea>
