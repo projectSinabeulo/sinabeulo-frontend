@@ -1,7 +1,10 @@
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
+import axios from 'axios';
 import { Colors } from "../styles/ui";
 import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, ImageBox } from '../components'
+
 import icon_speacker from '../assets/icon_speacker.png'
 import icon_previous from "../assets/icon_previous.png"
 import icon_next from "../assets/icon_next.png"
@@ -13,7 +16,8 @@ import image_tongue from "../assets/image_tongue.png"
 function Practice () {
     const navigate = useNavigate();
     //사용자 입력 단어 전달 받음
-    const inputWord = useLocation().state;
+    const inputWord = useLocation().state.inputWord;
+    const transWord = useLocation().state.transWord;
 
     const onClickListenBtn = () => {
         console.log("표준 발음 다시 듣기 버튼 클릭");
@@ -45,7 +49,7 @@ function Practice () {
                     <HrBox width="90%"/>
                     <TextArea>
                         <div className='title'>표준 발음 변환 결과</div>
-                        <div className='content' style={{color:Colors.green2}}>조타</div>
+                        <div className='content' style={{color:Colors.green2}}>{transWord}</div>
                     </TextArea>
                 </InnerArea>
                 <MultiButton width="150px" height="150px" image={icon_speacker} text1="표준 발음" text2="듣기" onClick={onClickListenBtn}/>
