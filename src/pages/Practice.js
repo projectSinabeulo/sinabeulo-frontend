@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import axios from 'axios';
 import { Colors } from "../styles/ui";
-import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, ImageBox } from '../components'
+import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, VowImageBox, ConImageBox } from '../components'
 
 import icon_speacker from '../assets/icon_speacker.png'
 import icon_previous from "../assets/icon_previous.png"
@@ -14,14 +14,46 @@ import image_tongue from "../assets/image_tongue.png"
 
 
 function Practice () {
+    const Hangul = require('hangul-js');
+
+    //사용자 입력 단어, 표준 발음 변환 결과 전달 받음
     const navigate = useNavigate();
-    //사용자 입력 단어 전달 받음
-    const inputWord = useLocation().state.inputWord;
-    const transWord = useLocation().state.transWord;
+    const inputWord = useLocation().state.inputWord+"";             //사용자 입력 단어
+    const transWord = useLocation().state.transWord+"";             //표준 발음 변환 결과
+    const [ wordPos, setWordPos ] = useState(0);                    //현재 사용자가 보고있는 단어 index
+    const [ currentChar, setCurrentChar ] = useState('');           //현재 사용자가 보고있는 단어
+    const [ currentFn, setCurrntFn ] = useState('');                //현재 사용자가 보고있는 단어의 초성
+    const [ currentSn, setCurrntSn ] = useState('');                //현재 사용자가 보고있는 단어의 중성
+    const [ currentTn, setCurrntTn ] = useState('');                //현재 사용자가 보고있는 단어의 종성
+    const wordLen = transWord.length;                               //전체 단어 길이
+
+    //사용자가 보고있는 음절
+    useEffect(() => {
+        setCurrentChar(transWord.charAt(wordPos));
+    }, [wordPos])
+
+    //사용자가 보고있는 음절의 초성, 중성 종성
+    useEffect(() => {
+        setCurrntFn(Hangul.disassemble(currentChar)[0]);
+        setCurrntSn(Hangul.disassemble(currentChar)[1]);
+        setCurrntTn(Hangul.disassemble(currentChar)[2]);
+    }, [currentChar])
 
     const onClickListenBtn = () => {
         console.log("표준 발음 다시 듣기 버튼 클릭");
     };
+
+    //사용자가 보고있는 음절 index 관리 (이전버튼)
+    const onPrevImage = () => {
+        if(wordPos == 0) { setWordPos(wordLen - 1); } 
+        else { setWordPos(wordPos - 1); }
+    }
+
+    //사용자가 보고있는 음절 index 관리 (다음버튼)
+    const onNextImage = () => {
+        if(wordPos == wordLen - 1) { setWordPos(0); } 
+        else { setWordPos(wordPos + 1); }
+    }
 
     const onRecord = () => {
         console.log("발음하기 버튼 클릭");
@@ -57,13 +89,13 @@ function Practice () {
 
             {/* 우측 연습 영역 */}
             <RightBox>
-                <OuterBox className='practiceWord' width="40vw" height="114px" text="조"></OuterBox>
+                <OuterBox className='practiceWord' width="40vw" height="114px" text={currentChar}></OuterBox>
                 <RowBox className='practiceImages'>
-                    <ImageButton width="75px" height="139px" image={icon_previous} />
+                    <ImageButton width="75px" height="139px" image={icon_previous} onClick={onPrevImage}/>
                     <InnerBox width="54px" height="30vh" text="표준발음"/>
-                    <ImageBox width="15vw" image={image_tongue} />
-                    <ImageBox width="15vw" image={image_tongue} />
-                    <ImageButton width="75px" height="139px" image={icon_next}/>
+                    <ConImageBox width="15vw" image={image_tongue} fn={currentFn} tn={currentTn}/>
+                    <VowImageBox width="15vw" sn={currentSn} />
+                    <ImageButton width="75px" height="139px" image={icon_next} onClick={onNextImage}/>
                 </RowBox>
                 <RowBox className='practiceButtons'>
                     <div style={{width:"2vw"}} />

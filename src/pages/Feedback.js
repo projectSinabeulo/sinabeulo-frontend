@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { Colors } from "../styles/ui";
-import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, ImageBox, TextButton } from '../components'
+import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, VowImageBox, TextButton } from '../components'
 import icon_speacker from '../assets/icon_speacker.png'
 import icon_previous from "../assets/icon_previous.png"
 import icon_next from "../assets/icon_next.png"
@@ -69,12 +69,12 @@ function Feedback () {
                         <InnerBox width="54px" height="30vh" text="사용자발음"/>
                     </ColumnBox>
                     <ColumnBox>
-                        <ImageBox width="15vw" image={image_tongue} />
-                        <ImageBox width="15vw" image={image_tongue} />
+                        <VowImageBox width="15vw" image={image_tongue} />
+                        <VowImageBox width="15vw" image={image_tongue} />
                     </ColumnBox>
                     <ColumnBox>
-                        <ImageBox width="15vw" image={image_tongue} />
-                        <ImageBox width="15vw" image={image_tongue} />
+                        <VowImageBox width="15vw" image={image_tongue} />
+                        <VowImageBox width="15vw" image={image_tongue} />
                     </ColumnBox>
                     <ImageButton width="75px" height="139px" image={icon_next}/>
                 </RowBox>
