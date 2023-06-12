@@ -1,7 +1,8 @@
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { Colors } from "../styles/ui";
-import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, VowImageBox, TextButton } from '../components'
+import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, VowImageBox, TextButton, ConImageBox } from '../components'
 import icon_speacker from '../assets/icon_speacker.png'
 import icon_previous from "../assets/icon_previous.png"
 import icon_next from "../assets/icon_next.png"
@@ -9,25 +10,76 @@ import image_tongue from "../assets/image_tongue.png"
 
 
 function Feedback () {
+    const Hangul = require('hangul-js');
+
+    //사용자 입력 단어, 표준 발음 변환 결과 전달 받음
     const navigate = useNavigate();
-    //사용자 입력 단어 전달 받음
-    const inputWord = useLocation().state;
+    const inputWord = useLocation().state.inputWord+"";             //사용자 입력 단어
+    const transWord = useLocation().state.transWord+"";             //표준 발음 변환 결과
+    const sttWord = useLocation().state.sttWord+"";                 //stt(사용자 발음) 변환 결과
+
+    const [ wordPos, setWordPos ] = useState(0);                    //현재 사용자가 보고있는 단어 index
+    const [ currentTransChar, setCurrentTransChar ] = useState(''); //현재 사용자가 보고있는 표준 발음 변환 단어
+    const [ currentTransFn, setCurrntTransFn ] = useState('');      //현재 사용자가 보고있는 표준 발음 변환 단어의 초성
+    const [ currentTransSn, setCurrntTransSn ] = useState('');      //현재 사용자가 보고있는 표준 발음 변환 단어의 중성
+    const [ currentTransTn, setCurrntTransTn ] = useState('');      //현재 사용자가 보고있는 표준 발음 변환 단어의 종성
+
+    const [ currentSttChar, setCurrentSttChar ] = useState('');     //현재 사용자가 보고있는 사용자 발음 변환 단어
+    const [ currentSttFn, setCurrntSttFn ] = useState('');          //현재 사용자가 보고있는 사용자 발음 변환 단어의 초성
+    const [ currentSttSn, setCurrntSttSn ] = useState('');          //현재 사용자가 보고있는 사용자 발음 변환 단어의 중성
+    const [ currentSttTn, setCurrntSttTn ] = useState('');          //현재 사용자가 보고있는 사용자 발음 변환 단어의 종성
+    const wordLen = transWord.length;                               //전체 단어 길이
+
+    //사용자가 보고있는 음절
+    useEffect(() => {
+        setCurrentTransChar(transWord.charAt(wordPos));
+        setCurrentSttChar(sttWord.charAt(wordPos));
+    }, [wordPos])
+
+    //사용자가 보고있는 음절의 초성, 중성 종성
+    useEffect(() => {
+        //표준 발음 변환 단어의 음절
+        setCurrntTransFn(Hangul.disassemble(currentTransChar)[0]);
+        setCurrntTransSn(Hangul.disassemble(currentTransChar)[1]);
+        setCurrntTransTn(Hangul.disassemble(currentTransChar)[2]);
+
+        //사용자 발음 변환 단어의 음절
+        setCurrntSttFn(Hangul.disassemble(currentSttChar)[0]);
+        setCurrntSttSn(Hangul.disassemble(currentSttChar)[1]);
+        setCurrntSttTn(Hangul.disassemble(currentSttChar)[2]);
+
+    }, [currentTransChar])
 
     const onStandardBtn = () => {
         console.log("표준 발음 다시 듣기 버튼 클릭");
     };
 
     const onUserVoiceBtn = () => {
-        console.log("표준 발음 다시 듣기 버튼 클릭");
+        console.log("사용자 발음 다시 듣기 버튼 클릭");
     };
 
+    //사용자가 보고있는 음절 index 관리 (이전버튼)
+    const onPrevImage = () => {
+        if(wordPos == 0) { setWordPos(wordLen - 1); } 
+        else { setWordPos(wordPos - 1); }
+    }
+
+    //사용자가 보고있는 음절 index 관리 (다음버튼)
+    const onNextImage = () => {
+        if(wordPos == wordLen - 1) { setWordPos(0); } 
+        else { setWordPos(wordPos + 1); }
+    }
+
     const moveToPractice = () => {
-        console.log("발음 연습 다시 하기 클릭");
-        navigate('/practice', { state: inputWord});
+        navigate('/practice', { 
+            state: {
+                inputWord: inputWord,
+                transWord: transWord
+            }
+        });
     };
 
     const moveToSearch = () => {
-        console.log("다른 단어 연습하기 클릭");
         navigate('/');
     };
 
@@ -44,12 +96,12 @@ function Feedback () {
                     <HrBox width="90%"/>
                     <TextArea>
                         <div className='title'>표준 발음 변환 결과</div>
-                        <div className='content' style={{color:Colors.green2}}>조타</div>
+                        <div className='content' style={{color:Colors.green2}}>{transWord}</div>
                     </TextArea>
                     <HrBox width="90%"/>
                     <TextArea>
                         <div className='title'>사용자 발음 변환 결과</div>
-                        <div className='content' style={{color:Colors.green2}}>조따</div>
+                        <div className='content' style={{color:Colors.green2}}>{sttWord}</div>
                     </TextArea>
                 </InnerArea>
                 <div style={{display:"flex", flexDirection:"row", justifyContent:"space-evenly", width:"80%"}}>
@@ -60,23 +112,23 @@ function Feedback () {
 
             {/* 우측 연습 영역 */}
             <RightBox>
-                <OuterBox className='practiceWord' width="40vw" height="94px" text="조"></OuterBox>
+                <OuterBox className='practiceWord' width="40vw" height="94px" text={currentTransChar}></OuterBox>
 
                 <RowBox className='practiceImages'>
-                    <ImageButton width="75px" height="139px" image={icon_previous} />
+                    <ImageButton width="75px" height="139px" image={icon_previous} onClick={onPrevImage}/>
                     <ColumnBox>
                         <InnerBox width="54px" height="30vh" text="표준발음"/>
                         <InnerBox width="54px" height="30vh" text="사용자발음"/>
                     </ColumnBox>
                     <ColumnBox>
-                        <VowImageBox width="15vw" image={image_tongue} />
-                        <VowImageBox width="15vw" image={image_tongue} />
+                        <ConImageBox width="15vw" image={image_tongue} fn={currentTransFn} tn={currentTransTn}/>
+                        <ConImageBox width="15vw" image={image_tongue} fn={currentSttFn} tn={currentSttTn}/>  
                     </ColumnBox>
                     <ColumnBox>
-                        <VowImageBox width="15vw" image={image_tongue} />
-                        <VowImageBox width="15vw" image={image_tongue} />
+                        <VowImageBox width="15vw" sn={currentTransSn} />
+                        <VowImageBox width="15vw" sn={currentSttSn} />
                     </ColumnBox>
-                    <ImageButton width="75px" height="139px" image={icon_next}/>
+                    <ImageButton width="75px" height="139px" image={icon_next} onClick={onNextImage}/>
                 </RowBox>
 
                 <RowBox className='practiceButtons'>

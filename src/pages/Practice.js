@@ -64,8 +64,13 @@ function Practice () {
     };
 
     const onComplete = () => {
-        console.log("완료하기 버튼 클릭");
-        navigate('/feedback', { state: inputWord});
+        navigate('/feedback', { 
+            state: {
+                inputWord: inputWord,
+                transWord: transWord,
+                sttWord: transWord     //todo. stt 변환결과 전달
+            }
+        });
     };
 
     return (

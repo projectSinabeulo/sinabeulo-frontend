@@ -24,8 +24,7 @@ function Search() {
                 transWord: response.data
             }
         });
-        console.log("사용자 입력 값: " + inputWord);
-        console.log("표준 발음 변환 결과: " + response.data);
+    
 
         //검색이 불가한 단어를 입력했을 떄, 경고창 출력
         } catch (error) {
