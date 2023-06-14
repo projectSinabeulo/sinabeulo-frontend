@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import axios from 'axios';
+import Swal from "sweetalert2";
 import { Colors } from "../styles/ui";
 import { MultiButton, HrBox, OuterBox, ImageButton, InnerBox, VowImageBox, ConImageBox } from '../components'
 
@@ -27,6 +28,56 @@ function Practice () {
     const [ currentTn, setCurrntTn ] = useState('');                //현재 사용자가 보고있는 단어의 종성
     const wordLen = transWord.length;                               //전체 단어 길이
 
+    const [stream, setStream] = useState();
+    const [media, setMedia] = useState();
+    const [onRec, setOnRec] = useState(true);
+    const [source, setSource] = useState();
+    const [analyser, setAnalyser] = useState();
+    const [audioUrl, setAudioUrl] = useState();
+    const [disabled, setDisabled] = useState(true);
+    const [sound, setSound] = useState();
+
+    //SpeechToText api 호출
+    async function speechToText() {
+        const formData = new FormData();
+        formData.append('file', audioUrl);
+
+        try {
+          const response = await axios.post('/uploadFormAction', 
+            formData
+            , {
+                headers: {
+                    "Contest-Type": "multipart/form-data"
+                }
+            }
+          ).then(res => {
+            navigate('/feedback', { 
+            state: {
+                inputWord: inputWord.replace(" ", ""),
+                transWord: transWord.replace(" ", ""),
+                sttWord: res.data.replace(" ", ""),
+                audioUrl: audioUrl
+            }
+            });
+          })
+        }
+
+        //speech to text 변환 실패 시, 경고창 출력
+         catch (error) {
+            console.error("/uploadFormAction error message: " + error);
+            Swal.fire({
+                icon: "error",
+                title: "변환 불가",
+                text: `녹음을 진행하지 않았습니다. 다시 시도해주세요.`,
+                showCancelButton: false,
+                confirmButtonText: "확인",
+                confirmButtonColor: "#407C46"
+            }).then((res) => {
+                window.location.replace("/practice"); 
+            });
+        }
+    };
+
     //사용자가 보고있는 음절
     useEffect(() => {
         setCurrentChar(transWord.charAt(wordPos));
@@ -47,31 +98,100 @@ function Practice () {
     const onPrevImage = () => {
         if(wordPos == 0) { setWordPos(wordLen - 1); } 
         else { setWordPos(wordPos - 1); }
-    }
+    };
 
     //사용자가 보고있는 음절 index 관리 (다음버튼)
     const onNextImage = () => {
         if(wordPos == wordLen - 1) { setWordPos(0); } 
         else { setWordPos(wordPos + 1); }
-    }
+    };
 
+    //발음하기 버튼 - 녹음 시작
     const onRecord = () => {
-        console.log("발음하기 버튼 클릭");
-    };
+        setDisabled(true);
+        
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();      // 음원정보를 담은 노드를 생성, 음원을 실행/디코딩
+        const analyser = audioCtx.createScriptProcessor(0, 1, 1);
+        setAnalyser(analyser);
+    
+        function makeSound(stream) {                                                    //오디오 스트림 정보
+            const source = audioCtx.createMediaStreamSource(stream);
+            setSource(source);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+        }
 
-    const onCheck = () => {
-        console.log("들어보기 버튼 클릭");
-    };
+        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {         //마이크 사용 권한 설정
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+            setStream(stream);
+            setMedia(mediaRecorder);
+            makeSound(stream);
+    
+            analyser.onaudioprocess = function (e) {                                    // 20초 초과시 녹음 중지
+            if (e.playbackTime > 20) {
+                stream.getAudioTracks().forEach(function (track) {
+                track.stop();
+                });
+                mediaRecorder.stop();
 
-    const onComplete = () => {
-        navigate('/feedback', { 
-            state: {
-                inputWord: inputWord,
-                transWord: transWord,
-                sttWord: transWord     //todo. stt 변환결과 전달
+                analyser.disconnect();                                                  //노드 연결 해제
+                audioCtx.createMediaStreamSource(stream).disconnect();
+    
+                mediaRecorder.ondataavailable = function (e) {
+                setAudioUrl(e.data);
+                setOnRec(true);
+                };
+            } else {
+                setOnRec(false);
             }
+            };
         });
     };
+        
+    //발음하기 버튼 - 녹음 중지
+    const offRecord = () => {
+        media.ondataavailable = function (e) {                                          //Blob 데이터 저장
+            setAudioUrl(e.data);
+            setOnRec(true);
+        };
+    
+        stream.getAudioTracks().forEach(function (track) {                              //오디오 스트림 정지
+            track.stop();
+        });
+    
+        media.stop();                                                                   //미디어 캡처 중지
+    
+        analyser.disconnect();                                                          //노드 연결 해제
+        source.disconnect();
+        
+        if (audioUrl) {                                                                 //오디오 파일로 변환 - '들어보기'구현 위함
+            URL.createObjectURL(audioUrl);
+        }
+        const sound = new File([audioUrl], "soundBlob", {
+            lastModified: new Date().getTime(),
+            type: "audio",
+        });
+        setSound(sound);
+            
+        setDisabled(false);
+    };
+
+    //들어보기 버튼
+    const onPlay = () => {
+        if(audioUrl){
+            const audio = new Audio(URL.createObjectURL(audioUrl));
+            audio.loop = false;
+            audio.volume = 1;
+            audio.play();
+        }
+    };
+
+    //완료하기 버튼
+    const onComplete = () => {
+        speechToText();
+    };
+
 
     return (
         <Container>
@@ -104,8 +224,8 @@ function Practice () {
                 </RowBox>
                 <RowBox className='practiceButtons'>
                     <div style={{width:"2vw"}} />
-                    <MultiButton width="178px" height="148px" image={icon_record} text1="발음하기" onClick={onRecord}/>
-                    <MultiButton width="178px" height="148px" image={icon_speacker} text1="들어보기" onClick={onCheck}/>
+                    <MultiButton width="178px" height="148px" image={icon_record} text1="발음하기" onClick={onRec ? onRecord : offRecord} />
+                    <MultiButton width="178px" height="148px" image={icon_speacker} text1="들어보기" onClick={onPlay}/>
                     <MultiButton width="178px" height="148px" image={icon_complete} text1="완료하기" onClick={onComplete}/>
                     <div style={{width:"2vw"}} />
                 </RowBox>

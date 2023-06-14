@@ -59,8 +59,6 @@ function ConImageBox(props) {
                 setTnPos(ConPos[i]);
             }
         }
-
-        console.log(props.tn);
     }, [props])
 
     

@@ -17,6 +17,7 @@ function Feedback () {
     const inputWord = useLocation().state.inputWord+"";             //사용자 입력 단어
     const transWord = useLocation().state.transWord+"";             //표준 발음 변환 결과
     const sttWord = useLocation().state.sttWord+"";                 //stt(사용자 발음) 변환 결과
+    const audioUrl = useLocation().state.audioUrl;
 
     const [ wordPos, setWordPos ] = useState(0);                    //현재 사용자가 보고있는 단어 index
     const [ currentTransChar, setCurrentTransChar ] = useState(''); //현재 사용자가 보고있는 표준 발음 변환 단어
@@ -55,7 +56,12 @@ function Feedback () {
     };
 
     const onUserVoiceBtn = () => {
-        console.log("사용자 발음 다시 듣기 버튼 클릭");
+        if(audioUrl){
+            const audio = new Audio(URL.createObjectURL(audioUrl));
+            audio.loop = false;
+            audio.volume = 1;
+            audio.play();
+        }
     };
 
     //사용자가 보고있는 음절 index 관리 (이전버튼)
@@ -70,15 +76,17 @@ function Feedback () {
         else { setWordPos(wordPos + 1); }
     }
 
+    //발음 연습 다시하기
     const moveToPractice = () => {
         navigate('/practice', { 
             state: {
-                inputWord: inputWord,
-                transWord: transWord
+                inputWord: inputWord.replace(" ", ""),
+                transWord: transWord.replace(" ", "")
             }
         });
     };
 
+    //다른 단어 연습하기
     const moveToSearch = () => {
         navigate('/');
     };

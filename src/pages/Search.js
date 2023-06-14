@@ -15,13 +15,13 @@ function Search() {
     //표준 발음 변환 api 호출
     async function transInputWord() {
         try {
-          const response = await axios.post('/second',{
+          const response = await axios.post('/pronunn',{
               word: inputWord,
           });
           navigate('/practice', { 
             state: {
-                inputWord: inputWord,
-                transWord: response.data
+                inputWord: inputWord.replace(" ", ""),
+                transWord: response.data.replace(" ", "")
             }
         });
     
