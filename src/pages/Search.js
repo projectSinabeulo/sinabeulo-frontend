@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FadeLoader from "react-spinners/FadeLoader";
 import Swal from "sweetalert2";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import axios from 'axios';
 import { Colors } from "../styles/ui";
 import { ImageButton } from "../components"
@@ -11,9 +13,11 @@ import icon_search from "../assets/icon_search.png"
 function Search() {
     const navigate = useNavigate();
     const [inputWord, setInputWord] = useState('');
+    const [loading, setLoading] = useState(false);
 
     //표준 발음 변환 api 호출
     async function transInputWord() {
+        setLoading(!loading)
         try {
           const response = await axios.post('/pronunn',{
               word: inputWord,
@@ -58,10 +62,25 @@ function Search() {
     }
 
     return (
-        <Container>
-            <Input placeholder="발음 연습하고 싶은 단어를 입력해주세요" onChange={onInputChange} value={inputWord} onKeyDown={onSearchButtonDown}/>
+        <>
+            <Container>
+                <Input placeholder="발음 연습하고 싶은 단어를 입력해주세요" onChange={onInputChange} value={inputWord} onKeyDown={onSearchButtonDown}/>
+                { loading ?
+                <FadeLoader
+                height={25}
+                width={8}
+                radius={4}
+                margin={17}
+                color="#ABCEB1"
+                loading={loading}
+                speedMultiplier={0.7}
+            />
+            :
             <ImageButton width="103px" height="103px" image={icon_search} onClick={onSearchButtonClick} />
-        </Container>
+            }
+                
+            </Container>
+        </>
     )
 }
 export default Search;
